@@ -65,13 +65,15 @@ func (gaugeValue *GaugeValue) SetValue(val float64, attributes []attribute.KeyVa
 	gaugeValue.mutex.Lock()
 	defer gaugeValue.mutex.Unlock()
 
-	gaugeValue.metricAttributes.setAttributes(attributes)
+	if (attributes != nil && len(attributes) > 0) {
+		gaugeValue.metricAttributes.setAttributes(attributes)
+	}
 	gaugeValue.Value = val
 }
 
 func (gaugeValue *GaugeValue) GetValue() float64 {
-	gaugeValue.mutex.Lock()
-	defer gaugeValue.mutex.Unlock()
+	gaugeValue.mutex.RLock()
+	defer gaugeValue.mutex.RUnlock()
 
 	return gaugeValue.Value
 }
